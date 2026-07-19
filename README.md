@@ -130,4 +130,5 @@ glue and `muluw()` helpers.
 - Executable crunched with [Shrinkler](https://github.com/askeksa/Shrinkler)
   by Blueberry/Loonies
 - The Boing ball is by Dale Luck and RJ Mical, 1984.
+- The AmiFetch Icon was designed by [Justin](https://github.com/JustinWalsworth)
 </markdown>
