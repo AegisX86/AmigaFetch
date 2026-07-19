@@ -4,7 +4,7 @@ A neofetch for AmigaOS. Renders a procedurally generated, spinning Boing
 ball next to your machine's system information, on a screen it opens
 itself. Under 4K when crunched.
 
-<a href="photos/a1000.jpg"><img src="photos/a1000.jpg" alt="AmiFetch on my Amiga 1000" width="500"></a>
+<a href="photos/a1000.png"><img src="photos/a1000.png" alt="AmiFetch on my Amiga 1000" width="500"></a>
 
 
 Shows: detected model, Kickstart and Workbench versions, CPU and FPU,
