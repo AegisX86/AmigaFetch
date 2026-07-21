@@ -4,8 +4,22 @@ A neofetch for AmigaOS. Renders a procedurally generated, spinning Boing
 ball next to your machine's system information, on a screen it opens
 itself. Under 4K when crunched.
 
-<a href="photos/a1000.png"><img src="photos/a1000.png" alt="AmiFetch on my Amiga 1000" width="500"></a>
-
+<table align="center">
+  <tr>
+    <td align="center">
+      <a href="photos/a1000.png">
+        <img src="photos/a1000.png" alt="AmiFetch on my Amiga 1000" width="360">
+      </a>
+      <br><em>Amiga 1000</em>
+    </td>
+    <td align="center">
+      <a href="photos/A500.png">
+        <img src="photos/A500.png" alt="AmiFetch on my Amiga 500" width="360">
+      </a>
+      <br><em>Amiga 500</em>
+    </td>
+  </tr>
+</table>
 
 Shows: detected model, Kickstart and Workbench versions, CPU and FPU,
 chipset (OCS/ECS/AGA) and video system (PAL/NTSC), chip and other RAM
@@ -38,8 +52,8 @@ Click the left mouse button to exit.
 
 ## Status / honesty section
 
-I have tested this on my real Amiga 1000, and in WinUAE
-against A500, A600, A1200, and A4000 configurations. I do
+I have tested this on my real Amiga 1000 and Amiga 500, and in WinUAE
+against A600, A1200, and A4000 configurations. I do
 **not** own most of those machines. Emulation is good but it is not
 hardware, so on real ECS/AGA big-box Amigas, accelerated machines, or
 unusual configurations there may be bugs or strange behavior. In
