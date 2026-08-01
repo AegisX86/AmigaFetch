@@ -1,5 +1,12 @@
 # AmiFetch
 
+<p align="center">
+  <a href="amifetch.gif">
+    <img src="photos/amifetch.gif" alt="AmiFetch running" width="480">
+  </a>
+  <br><em>Booting from the ADF, WinUAE</em>
+</p>
+
 A neofetch for AmigaOS. Renders a procedurally generated, spinning Boing
 ball next to your machine's system information, on a screen it opens
 itself. Under 4K when crunched.
