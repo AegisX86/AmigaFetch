@@ -1,7 +1,7 @@
 # AmiFetch
 
 <p align="center">
-  <a href="amifetch.gif">
+  <a href="photos/amifetch.gif">
     <img src="photos/amifetch.gif" alt="AmiFetch running" width="480">
   </a>
   <br><em>Booting from the ADF, WinUAE</em>
