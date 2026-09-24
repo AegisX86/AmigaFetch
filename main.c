@@ -456,6 +456,43 @@ static UBYTE gayleId(void) {
 }
 
 /*
+ * Apollo 68080 (Vampire) detection, per:
+ *   https://adevnoo.wikidot.com/detect-080-code
+ *
+ * The 080 sets AttnFlags bit 10, which no Motorola CPU uses. It also
+ * sets the 010/020/030/040 and FPU bits (reports $A47F), so it has to
+ * be tested before anything else or it reads as a 68040 on an AGA
+ * machine. Old NDK headers lack the define, newer ones may have it.
+ *
+ * The Apollo registers are only read once bit 10 is set:
+ *   $DFF3FC VampireVersion. Board ID in the high byte (the page uses
+ *           move.b, so a byte read at the even address).
+ *   $DFF016 POTGOR. Bits 7..1 are a chip ID: 0 = Paula, 1 = Arne.
+ *           Arne means the full SAGA chipset (V4). A V2 sits on the
+ *           host's real chipset and reads 0 here.
+ */
+#ifndef AFF_68080
+#define AFF_68080 (1 << 10)
+#endif
+#define VAMPVER (*(volatile UBYTE *)0xDFF3FC)
+#define POTGOR  (*(volatile UWORD *)0xDFF016)
+
+/* Board IDs 1..8. Firebird (A500), Shapeshifter (A1000) and Salamander
+   (A2000) all report 3, so that one stays a range, same anti LARP rule
+   as the stock OCS case. */
+static const char *const vampName[9] = {
+    NULL,
+    "Amiga 600 + Vampire V2",           /* 1 */
+    "Amiga 500 + Vampire V2",           /* 2 */
+    "Amiga 500/1000/2000 + Vampire V4", /* 3 */
+    "Amiga 1200 + V4 Icedrake",         /* 4 */
+    "Vampire V4 Standalone",            /* 5 */
+    "Amiga 1200 + Vampire V2",          /* 6 */
+    "Amiga 600 + V4 Manticore",         /* 7 */
+    "Vampire V4 A6000 Unicorn",         /* 8 */
+};
+
+/*
  * Model detection, the "hostname". Disclaimer: the Amiga has NO model 
  * register anywhere. Every program that prints "A1200" is guessing 
  * from which support chips answer. My heuristics:
@@ -479,6 +516,13 @@ static UBYTE gayleId(void) {
  * rather print a truthful range than a confident LARP LARP LARP SAHUR.
  */
 static const char *detectModel(UWORD att, UWORD agnusId) {
+    /* 080 first, before any chip probing. NULL means an unknown board
+       ID, and the caller prints the raw number so people can report it. */
+    if (att & AFF_68080) {
+        UBYTE id = VAMPVER;
+        return id < 9 ? vampName[id] : NULL;
+    }
+
     UWORD aga = (agnusId & 0x20) && (agnusId & 0x02);
     UWORD ecs = (agnusId & 0x20) && !aga;
     UBYTE ramsey = *(volatile UBYTE *)0xDE0043;
@@ -541,7 +585,8 @@ static void collectInfo(void) {
        with the FPU on the die rather than a separate 6888x. */
     UWORD att = SysBase->AttnFlags;
     const char *cpu = "MC68000";
-    if      (att & (1 << 7))   cpu = "MC68060";
+    if      (att & AFF_68080)  cpu = "AC68080"; 
+    else if (att & (1 << 7))   cpu = "MC68060";
     else if (att & AFF_68040)  cpu = "MC68040";
     else if (att & AFF_68030)  cpu = "MC68030";
     else if (att & AFF_68020)  cpu = "MC68020";
@@ -559,6 +604,9 @@ static void collectInfo(void) {
     UWORD agnusId = (*(volatile UWORD *)0xDFF004 >> 8) & 0x7F;
     const char *chipset = "OCS";
     if (agnusId & 0x20) chipset = (agnusId & 0x02) ? "AGA" : "ECS";
+    /* SAGA reports an AGA Agnus ID, so Arne in POTGOR overrides it.
+       Gated on the 080 bit, see the Vampire notes above. */
+    if ((att & AFF_68080) && (POTGOR & 0xFE)) chipset = "SAGA";
 
     /* Kickstart version is just exec.library's own version field.
        Workbench's version comes from version.library, which only
@@ -590,7 +638,9 @@ static void collectInfo(void) {
     ULONG chipFree = AvailMem(MEMF_CHIP);
     ULONG fastFree = AvailMem(MEMF_FAST);
 
-    ADD("Host: %s", (ULONG)detectModel(att, agnusId));
+    const char *host = detectModel(att, agnusId);
+    if (host) ADD("Host: %s", (ULONG)host);
+    else      ADD("Host: Apollo 68080, board ID %ld", (ULONG)VAMPVER);
     ADD("Kickstart: %s (%ld.%ld)", (ULONG)kickName(kv), (ULONG)kv, (ULONG)kr);
     if (wbv) ADD("Workbench: %ld.%ld", (ULONG)wbv, (ULONG)wbr);
     ADD("CPU: %s   FPU: %s", (ULONG)cpu, (ULONG)fpu);

@@ -1,0 +1,8 @@
+*.bpl
+*.pal
+*.bin
+*.p61
+out/
+obj/
+gfx/
+support/
